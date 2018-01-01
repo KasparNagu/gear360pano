@@ -33,6 +33,7 @@ EXTRANONAOPTIONS="-g"
 EXTRAENBLENDOPTIONS="--gpu"
 # Debug, yes - print debug, empty - no debug
 DEBUG="no"
+PTOTMPL=
 
 # Debug, arguments:
 # 1. Text to print
@@ -55,6 +56,7 @@ clean_up() {
 # http://stackoverflow.com/questions/5195607/checking-bash-exit-status-of-several-commands-efficiently
 run_command() {
   # Remove empty arguments (it will confuse the executed command)
+  echo running command: $@
   cmd=("$@")
   local i
   for i in "${!cmd[@]}"; do
@@ -181,6 +183,7 @@ print_help() {
   echo "-r|--remove  remove source file after processing (use with care)"
   echo "-t|--temp DIR set temporary directory (default: use system's"
   echo "             temporary directory)"
+  echo "-p|--ptotmpl NAME an alternative project template"
   echo "-h|--help    prints this help"
 }
 
@@ -192,6 +195,7 @@ create_gallery() {
 
 # Source (modified)
 # https://stackoverflow.com/questions/192249/how-do-i-parse-command-line-arguments-in-bash
+FILES=()
 while [[ $# -gt 0 ]]
 do
 key="$1"
@@ -251,14 +255,20 @@ case $key in
     REMOVESOURCE=1
     shift
     ;;
+  -p|--ptotmpl)
+    PTOTMPL="$2"
+    shift
+    shift
+    ;;
   *)
-    break
+    FILES+=("$1")
+    shift
     ;;
 esac
 done
 
 # Check argument(s)
-if [ -z "${1+x}" ]; then
+if [ ${#FILES[@]} -eq 0 ]; then
   print_help
   exit 1
 fi
@@ -275,11 +285,12 @@ if [ "$CREATEGALLERY" == "yes" ] && [ "$OUTDIR" != "html/data" ] && [ "$OUTDIR" 
 fi
 
 # TODO: add option for parallel
-for panofile in $1
+for panofile in "${FILES[@]}"
 do
-  OUTNAMEPROTO=`dirname "$panofile"`/`basename "${panofile%.*}"`_pano.jpg
-  OUTNAME=`basename $OUTNAMEPROTO`
-  OUTNAMEFULL=$OUTDIR/$OUTNAME
+  echo hallo: $panofile
+  OUTNAMEPROTO="$(dirname "$panofile")/$(basename "${panofile%.*}")_pano.jpg"
+  OUTNAME="$(basename "$OUTNAMEPROTO")"
+  OUTNAMEFULL="$OUTDIR/$OUTNAME"
 
   # Check if this already processed panorama
   # https://stackoverflow.com/questions/229551/string-contains-in-bash
@@ -289,9 +300,7 @@ do
   fi
 
   # Is ther a pto override?
-  if [ -n "$2" ]; then
-    PTOTMPL="$2"
-  else
+  if [ -z "$PTOTMPL" ]; then
     # Detect camera model for each image
     CAMERAMODEL=`exiftool -s -s -s -Model $panofile`
     print_debug "Camera model: $CAMERAMODEL"
@@ -309,7 +318,7 @@ do
   fi
 
   echo "Processing panofile: $panofile"
-  process_panorama $panofile $OUTNAMEFULL $PTOTMPL
+  process_panorama "$panofile" "$OUTNAMEFULL" "$PTOTMPL"
 
   if [ ! -z "${REMOVESOURCE+x}" ]; then
     echo "Removing: $panofile"
