@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="//povdocs.github.io/webvr-starter-kit/build/vr.js"></script>
+  </head>
+  <body>
+    <script type="text/javascript">
+      var l = location.search.match(/name=(.*)/)[1];
+      VR.panorama('data/'+l);
+    </script>
+  </body>
+</html>

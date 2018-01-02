@@ -103,10 +103,12 @@ function updateFileList() {
       var liChild = document.createElement("li");
       // Get only the file name, we don't care about the rest of the path
       var fileNameOnly = item.split('/').pop();
-      // Add text to li element
-      liChild.appendChild(document.createTextNode(fileNameOnly));
-      // Set onclick attribute
-      liChild.setAttribute("onclick", "onClickFile(\"" + item + "\")");
+      var link = document.createElement("a");
+      link.setAttribute("href","/show-webvr.html?name="+fileNameOnly);
+      var img = document.createElement("img");
+      img.setAttribute("src",item.replace(/(_small)?.jpg/,"_thumb.jpg"));
+      link.append(img);
+      liChild.appendChild(link);
       ulList.appendChild(liChild);
     }
   });
@@ -138,4 +140,4 @@ function updateListHighlight(itemName, newClass) {
 }
 
 // Start by loading list of files
-loadFile(FILELISTURI, updateFileList);
+loadFile(FILELISTURI+"?"+Math.random(), updateFileList);
