@@ -27,7 +27,8 @@ OUTTEMPDIRSUFF="out"
 OUTDIR="$DIR/html/data"
 # Options, default is the quality option, overridable by speed parameter
 FFMPEGQUALITYDEC="-q:v 2"
-FFMPEGQUALITYENC="-c:v libx265 -x265-params crf=18"
+#FFMPEGQUALITYENC="-c:v libx265 -x265-params crf=18"
+FFMPEGQUALITYENC="-c:v libvpx  -crf 18 -b:v 100M"
 IMAGETMPLDEC="image%05d.jpg"
 IMAGETMPLENC="image%05d_pano.jpg"
 PTOTMPL4K="$DIR/gear360video4k.pto"
@@ -35,7 +36,7 @@ PTOTMPL2K="$DIR/gear360video2k.pto"
 # This is a default, it will/should be overwritten anyway
 PTOTMPL="$DIR/${PTOTMPL4K}"
 TMPAUDIO="tmpaudio.aac"
-TMPVIDEO="tmpvideo.mp4"
+TMPVIDEO="tmpvideo.webm"
 # Throttle parallel processing to give some room for other processes
 # See: https://www.gnu.org/software/parallel/parallel_tutorial.html#Limiting-the-resources
 PARALLELEXTRAOPTS="--load 99% --noswap --memfree 500M"
@@ -189,7 +190,7 @@ done
 # Output name as second argument plus output directory
 if [ -z "${2+x}" ]; then
   # If invoked by nautilus open-with, we need to remember the proper directory in the outname
-  OUTNAME=$OUTDIR/`basename "${1%.*}"`_pano.mp4
+  OUTNAME=$OUTDIR/`basename "${1%.*}"`_pano.webm
   print_debug "Output filename: $OUTNAME"
 else
   OUTNAME=$OUTDIR/`basename $2`
@@ -282,7 +283,7 @@ if [ -n "$SRCHASAUDIO" ]; then
 
   echo "Merging audio..."
   run_command notify-send -a $0 "Merging audio with final video..."
-  run_command ffmpeg -y -i "$OUTTEMPDIR/$TMPVIDEO" -i "$OUTTEMPDIR/$TMPAUDIO" -c:v copy -c:a aac -strict experimental "$OUTNAME"
+  run_command ffmpeg -y -i "$OUTTEMPDIR/$TMPVIDEO" -i "$OUTTEMPDIR/$TMPAUDIO" -c:v copy -c:a libvorbis "$OUTNAME"
 else
   print_debug "No audio detected (timelapse video?), continuing..."
   mv "$OUTTEMPDIR/$TMPVIDEO" "$OUTNAME"
