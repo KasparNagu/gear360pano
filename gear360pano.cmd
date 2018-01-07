@@ -287,7 +287,6 @@ fi
 # TODO: add option for parallel
 for panofile in "${FILES[@]}"
 do
-  echo hallo: $panofile
   OUTNAMEPROTO="$(dirname "$panofile")/$(basename "${panofile%.*}")_pano.jpg"
   OUTNAME="$(basename "$OUTNAMEPROTO")"
   OUTNAMEFULL="$OUTDIR/$OUTNAME"
