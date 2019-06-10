@@ -156,7 +156,7 @@ process_panorama() {
               "$2"
 
   # Problems with "-delete_original!", manually remove the file
-  rm ${2}_original
+  rm "${2}_original"
 
   # Clean up any files/directories we created on the way
   clean_up

@@ -106,10 +106,10 @@ function updateFileList() {
       var link = document.createElement("a");
       var img = document.createElement("img");
       if(fileNameOnly.endsWith(".mp4")){
-	      link.setAttribute("href","/show-webvr-video.html?name="+fileNameOnly.replace(/.mp4$/,""));
+	      link.setAttribute("href","./show-webvr-video.html?name="+fileNameOnly.replace(/.mp4$/,""));
 	      img.setAttribute("src",item.replace(/.mp4$/,"_thumb.jpg"));
       }else{
-	      link.setAttribute("href","/show-webvr.html?name="+fileNameOnly);
+	      link.setAttribute("href","./show-webvr.html?name="+fileNameOnly);
 	      img.setAttribute("src",item.replace(/(_small)?.jpg$/,"_thumb.jpg"));
       }
       link.append(img);
